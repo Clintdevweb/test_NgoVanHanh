@@ -28,7 +28,9 @@ export default function Test() {
         }
     ]);
     const [searchTeam, setSearchTerm] = useState('')
-    const renderData = (data) => {
+    const [change, setChange] = useState('')
+    const renderData = () => {
+        // console.log(data)
         return data.filter((item) => {
             if (searchTeam == '') {
                 return item
@@ -50,57 +52,113 @@ export default function Test() {
             )
         })
 
+
+
     }
 
     const searchTerm = (e) => {
-        e.preventDefault();
-        // console.log(e.target.value)
+        // setChange(true)
         setSearchTerm(e.target.value)
+
     }
-    const arrangeId = () => {
-        // console.log(1)
-        setData(data.sort((a, b) => {
-            return b.id - a.id
-        }))
-        console.log(data)
-        
+    const arrange = (e) => {    
+        let keySort = e.target.value
+        console.log(keySort)
+        setChange(keySort)
+        switch (keySort) {
+            case '': {
+                setData(data.sort((a, b) => {
+                    // console.log(a ,b)
+                    return a.id - b.id
+                }))
+
+                break;
+            }
+            case 'id':
+                setData(data.sort((a, b) => {
+                    return b.id - a.id
+                }))
+
+                break;
+            case 'name':
+                setData(data.sort((a, b) => {
+                    return a.name.localeCompare(b.name)
+                }))
+
+                break;
+            case 'username':
+                setData(data.sort((a, b) => {
+                    return a.username.localeCompare(b.username)
+                }))
+
+                break;
+            case 'email':
+                setData(data.sort((a, b) => {
+                    return a.email.localeCompare(b.email)
+                }))
+
+                break;
+            case 'address':
+                setData(data.sort((a, b) => {
+                    return a.address.city.localeCompare(b.address.city)
+                }))
+
+                break;
+            case 'phone':
+                setData(data.sort((a, b) => {
+                    return a.phone.localeCompare(b.phone)
+                }))
+
+                break;
+            case 'website':
+                setData(data.sort((a, b) => {
+                    return a.website.localeCompare(b.website)
+                }))
+
+                break;
+            case 'company':
+                setData(data.sort((a, b) => {
+                    return a.company.name.trim().toLocaleLowerCase().localeCompare(b.company.name.trim().toLocaleLowerCase())
+                }))
+
+                break;
+        }
+
+
     }
-    const arrangeString = () => {
-        setData(data.sort((a, b) => { 
-            return a.name.localeCompare(b.name)
-         }))
-        
-    }
+
     // Ỏ đây em lấy json demo ạ - do em không hiểu rõ đề lắm 
     useEffect(() => {
         fetch('https://jsonplaceholder.typicode.com/users')
             .then(res => res.json())
             .then(data => setData(data));
     }, [])
-    //    console.log(data)
-
     return (
         <>
             <div className='containerTest'>
                 <div className='search'>
                     <input placeholder='Please enter name or id' onChange={searchTerm} />
                     <i className="iconSearch fas fa-search"></i>
+
+                    <select className="select" onChange={arrange} >
+                        <option value=''>Choose...</option>
+                        {Object.keys(data[0]).map((key, i) => {
+                            return <option key={i} value={key}>Sắp xếp theo {key}</option>
+
+                        })}
+                    </select>
+
                 </div>
                 <table className="table table-bordered">
                     <thead>
                         <tr>
-                            {Object.keys(data[0])?.map((key, i) => {                        
-                                return (
-                                    <th key={i} scope="col">{key}
-                                    {key === 'id' ? <i className="filterIcon fas fa-filter" onClick={arrangeId}></i> : <i className="filterIcon fas fa-filter" onClick={arrangeString}></i>}
-                                        
-                                    </th>
-                                )
+                            {Object.keys(data[0]).map((key, i) => {
+                                return <th key={i}>{key}</th>
                             })}
                         </tr>
                     </thead>
                     <tbody>
-                        {renderData(data)}
+                        {renderData()}
                     </tbody>
                 </table>
             </div>
